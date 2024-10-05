@@ -72,9 +72,6 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
             print("haha funny to make code work")
         
         return images
-        
-
-datasetSearch(APIKey=APIKey, lowerLeft=[-12.3, -12.3], upperRight=[12.3, 12.3], startTime="2005-01-16", endTime="2018-09-13", minCloudCover=0, maxCloudCover=100, maxResults=10)
 
 logoutURL = url + "logout"
 response = requests.get(logoutURL, json={}, headers={'X-Auth-Token':APIKey})
