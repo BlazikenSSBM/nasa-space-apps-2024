@@ -1,19 +1,10 @@
 import requests
 import json
+from hidden_vars import *
+from login import login
+from logout import logout
 
-url = "https://m2m.cr.usgs.gov/api/api/json/stable/"
-loginURL = url + "login-token"
-loginData = {
-    "username": "hoadi",
-    "token": "yiea2@Hc5cteIRHycnd@DpicT8o_HwEROuSf0Qj66BJ6uRPRzJXKJl9WAGTD@FmM"
-}
-response = requests.get(loginURL, json=loginData)
-print(f"Login Error Code: {response.status_code}")
-print(f"Login JSON: {response.json()}")
-responseStr = json.dumps(response.json())
-jsonDict = json.loads(f"{responseStr}")
-APIKey = jsonDict['data']
-print(f"API KEY: {APIKey}\n")
+APIKey = login(URL, USERNAME, TOKEN)
 
 def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
     # Inputs:
@@ -26,7 +17,7 @@ def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover:
     # maxResults: int
     lowerLeft = [coordinate[0] - 5, coordinate[1] - 5]
     upperRight = [coordinate[0] + 5, coordinate[1] + 5]
-    datasetURL = url + f"scene-search"
+    datasetURL = URL + f"scene-search"
     datasetData = {
     "maxResults": maxResults,
     "datasetName": "gls_all",
@@ -82,8 +73,5 @@ print(f"{datasetSearch(coordinate=[0, 0], startTime='2010-01-01', endTime='2011-
 
 # datasetSearch(coordinate=[lat, long], startTime='YYYY-MM-DD', endTime='YYYY-MM-DD', minCloudCover=int, maxCloudCover=int, maxResults=int)
 
-logoutURL = url + "logout"
-response = requests.get(logoutURL, json={}, headers={'X-Auth-Token':APIKey})
-print(f"Logout Error Code: {response.status_code}")
-print(f"Logout JSON: {response.json()}")
+logout(url=URL, APIKey=APIKey)
     
