@@ -15,8 +15,7 @@ jsonDict = json.loads(f"{responseStr}")
 APIKey = jsonDict['data']
 print(f"API KEY: {APIKey}\n")
 
-
-def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
+def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
     # Inputs:
     # lowerLeft: [lat, long]
     # upperRight: [lat, long]
@@ -25,6 +24,8 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
     # maxCloudCover: int
     # minCloudCover: int
     # maxResults: int
+    lowerLeft = [coordinate[0] - 5, coordinate[1] - 5]
+    upperRight = [coordinate[0] + 5, coordinate[1] + 5]
     datasetURL = url + f"scene-search"
     datasetData = {
     "maxResults": maxResults,
@@ -44,9 +45,9 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
         },
         "metadataFilter": None,
         "cloudCoverFilter": {
-            "max": minCloudCover,
-            "min": maxCloudCover,
-            "includeUnknown": False
+            "max": maxCloudCover,
+            "min": minCloudCover,
+            "includeUnknown": True
         },
         "acquisitionFilter": {
             "end": endTime,
@@ -64,16 +65,23 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
     print(f"Dataset Error Code: {response.status_code}")
     print(f"Dataset JSON: {response.json()}\n\n\n")
     print(f"Data: {json.loads(f'{json.dumps(response.json())}')['data']}\n\n\n")
-    for n in range(0, maxResults):
-        try:
-            image = json.loads(f'{json.dumps(response.json())}')['data']['results'][n]['browse'][0]['browsePath']
-            images = str(image)
-        except IndexError:
-            print("haha funny to make code work")
-        
+    images = []
+    index = 0
+    try:
+        while index < maxResults:
+            image = str(json.loads(f'{json.dumps(response.json())}')['data']['results'][index]['browse'][0]['browsePath'])
+            images.insert(-1, image)
+            index += 1
+    except:
         return images
+    return images
+        
+
+
+print(f"{datasetSearch(coordinate=[0, 0], startTime='2010-01-01', endTime='2011-01-31', maxCloudCover=100, minCloudCover=0, maxResults=10)}")
 
 logoutURL = url + "logout"
 response = requests.get(logoutURL, json={}, headers={'X-Auth-Token':APIKey})
 print(f"Logout Error Code: {response.status_code}")
 print(f"Logout JSON: {response.json()}")
+    
