@@ -80,6 +80,8 @@ def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover:
 
 print(f"{datasetSearch(coordinate=[0, 0], startTime='2010-01-01', endTime='2011-01-31', maxCloudCover=100, minCloudCover=0, maxResults=10)}")
 
+# datasetSearch(coordinate=[lat, long], startTime='YYYY-MM-DD', endTime='YYYY-MM-DD', minCloudCover=int, maxCloudCover=int, maxResults=int)
+
 logoutURL = url + "logout"
 response = requests.get(logoutURL, json={}, headers={'X-Auth-Token':APIKey})
 print(f"Logout Error Code: {response.status_code}")
