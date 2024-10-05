@@ -1,0 +1,131 @@
+{
+    "results": [
+        {
+            "browse": [
+                {
+                    "id": "5e7c4182b2e77ed0",
+                    "browseRotationEnabled": null,
+                    "browseName": "Standard Browse",
+                    "browsePath": "https://ims.cr.usgs.gov/browse/gls_2010/031/029/LT50310292010167PAC01.jpg",
+                    "overlayPath": "https://ims.cr.usgs.gov/wms.py?service=WMS&request=GetMap&map=gls_all&layers=LT50310292010167PAC01",
+                    "overlayType": "ims_wms",
+                    "thumbnailPath": "https://ims.cr.usgs.gov/thumbnail/gls_2010/031/029/LT50310292010167PAC01.jpg"
+                }
+            ],
+            "cloudCover": null,
+            "entityId": "LT50310292010167PAC01",
+            "displayId": "LT50310292010167PAC01",
+            "orderingId": null,
+            "metadata": [
+                {
+                    "id": "5e7c418236ae7c32",
+                    "fieldName": "Entity ID",
+                    "dictionaryLink": "",
+                    "value": "LT50310292010167PAC01"
+                },
+                {
+                    "id": "5e7c41824cb1f9ed",
+                    "fieldName": "Acquisition Date",
+                    "dictionaryLink": "",
+                    "value": "2010-06-16 00:00:00-05"
+                },
+                {
+                    "id": "5e7c4182e66a6285",
+                    "fieldName": "WRS Path",
+                    "dictionaryLink": "",
+                    "value": 31
+                },
+                {
+                    "id": "5e7c41824c4c9ad1",
+                    "fieldName": "WRS Row",
+                    "dictionaryLink": "",
+                    "value": 29
+                },
+                {
+                    "id": "5e7c4182771796b4",
+                    "fieldName": "Coordinates",
+                    "dictionaryLink": "",
+                    "value": "44.61687 , -99.72309"
+                }
+            ],
+            "hasCustomizedMetadata": null,
+            "options": {
+                "bulk": true,
+                "download": true,
+                "order": true,
+                "secondary": false
+            },
+            "selected": {
+                "bulk": false,
+                "compare": false,
+                "order": false
+            },
+            "spatialBounds": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -101.13026,
+                            43.66171
+                        ],
+                        [
+                            -101.13026,
+                            45.56447
+                        ],
+                        [
+                            -98.28703,
+                            45.56447
+                        ],
+                        [
+                            -98.28703,
+                            43.66171
+                        ],
+                        [
+                            -101.13026,
+                            43.66171
+                        ]
+                    ]
+                ]
+            },
+            "spatialCoverage": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -101.13026,
+                            43.99063
+                        ],
+                        [
+                            -98.87556,
+                            43.66171
+                        ],
+                        [
+                            -98.28703,
+                            45.22673
+                        ],
+                        [
+                            -100.60048,
+                            45.56447
+                        ],
+                        [
+                            -101.13026,
+                            43.99063
+                        ]
+                    ]
+                ]
+            },
+            "temporalCoverage": {
+                "endDate": "2010-06-16 00:00:00-05",
+                "startDate": "2010-06-16 00:00:00-05"
+            },
+            "publishDate": "2011-12-26 06:22:12-06"
+        }
+    ],
+    "recordsReturned": 1,
+    "totalHits": 6,
+    "totalHitsAccuracy": "calculated",
+    "isCustomized": false,
+    "numExcluded": 0,
+    "startingNumber": 1,
+    "nextRecord": 2
+}
