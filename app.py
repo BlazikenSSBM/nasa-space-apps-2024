@@ -71,7 +71,7 @@ def getCoordinates():
         longitude = request.form['longitude']
         latitude = request.form['latitude']
         print(longitude, latitude)
-    return redirect('http://localhost:5173/', longitude=longitude, latitude=latitude)   
+    return redirect('http://localhost:5173/')   
 
 
 

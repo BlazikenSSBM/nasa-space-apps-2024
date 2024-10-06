@@ -20,6 +20,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tsparticles/svelte": "^3.1.1",
 		"tsparticles": "^3.5.0"
 	}
 }
