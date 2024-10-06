@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+from skyfield.api import EarthSatellite, load
+import numpy as np
+from EmailLandSat import send_simple_message
 from flask import Flask,request,redirect
 from flask.templating import render_template
-from flask_sqlalchemy import SQLAlchemy
-from EmailLandSat import send_simple_message
+import schedule
+import time
 
 
 app= Flask(__name__)
@@ -14,17 +18,14 @@ db= SQLAlchemy(app)
 #models
 class Main(db.Model):
     email = db.Column(db.String(255), primary_key=True)  # Primary key
-    latitudeA = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for latitudeA
-    longitudeA = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for longitudeA
-    latitudeB = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for latitudeB
-    longitudeB = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for longitudeB
+    latitude = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for latitude
+    longitude = db.Column(db.Numeric(9, 6), nullable=True)  # Decimal for longitude
+
 
     # Constraints are added in a more declarative way using SQLAlchemy
     __table_args__ = (
-        db.CheckConstraint('latitudeA BETWEEN -90 AND 90', name='lat_rangeA'),
-        db.CheckConstraint('longitudeA BETWEEN -180 AND 180', name='lon_rangeA'),
-        db.CheckConstraint('latitudeB BETWEEN -90 AND 90', name='lat_rangeB'),
-        db.CheckConstraint('longitudeB BETWEEN -180 AND 180', name='lon_rangeB'),
+        db.CheckConstraint('latitude BETWEEN -90 AND 90', name='lat_range'),
+        db.CheckConstraint('longitude BETWEEN -180 AND 180', name='lon_range'),
         db.CheckConstraint("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'", name='email_regex')
     )
 def create_tables():
@@ -33,9 +34,12 @@ def create_tables():
 app = Flask(__name__)
 
 @app.route("/")
-def index():
-#	return render_template("index.html")
-    return "Hello, World!"
+def index_route():
+    return send_from_directory('./svelte/build', 'index.html')
+
+@app.route("/<path:path>")
+def static_files(path):
+    return send_from_directory('./svelte/build', path)
 
 @app.route('/register')
 def register():
@@ -45,24 +49,75 @@ def register():
 def getEmail():
     if request.method=='POST':
         user=request.form['email']
-        latitudeA= request.form['latitudeA']
-        longtitudeA=request.form['longtitudeA']
-        latitudeB=request.form['latitudeB']
-        longtitudeB=request.form['longtitudeB']
+        latitude= request.form['latitude']
+        longtitude=request.form['longtitude']
+
 
         existing_user = Main.query.filter_by(email=user).first()
 
         if existing_user:
-            return render_template("register.html", name='email accepted')
+            return redirect("http://localhost:5173/notifications", name="email already exists")
         else:
-            new_user = Main(email=user, latitudeA=latitudeA, longitudeA=longtitudeA, latitudeB=latitudeB, longitudeB=longtitudeB)
+            new_user = Main(email=user, latitude=latitude, longitude=longtitude)
             db.session.add(new_user)
             db.session.commit()
-            return render_template("register.html", name="email accepted")
+            return redirect("http://localhost:5173/notifications", name="email added to notification list")
     
-    return render_template("register.html",name= "please enter valid detials")
+    return redirect("http://localhost:5173/notifications", name= "please enter valid detials")
 
-send_simple_message()
+@app.route('/getCoordinates', methods=['POST','GET'])
+def getCoordinates():
+    if request.method == 'POST':
+        longitude = request.form['longitude']
+        latitude = request.form['latitude']
+        print(longitude, latitude)
+    return redirect('http://localhost:5173/', longitude=longitude, latitude=latitude)   
+
+
+
+def calculate_time(email):
+    # Fetch coordinates from the database
+    entry = Main.query.filter_by(email=email).first()
+    if not entry:
+        return jsonify({'error': 'Entry not found'}), 404
+    
+    line1 = "1 39084U 13008A   21264.43259861  .00000150  00000-0  00000-0 0  9997"
+    line2 = "2 39084  98.1864 193.5981 0001274  89.4485 270.6777 14.57100866396183"
+    satellite = EarthSatellite(line1, line2, 'Landsat 8', load.timescale())
+
+    # Get the current time
+    ts = load.timescale()
+    current_time = ts.now()
+
+    target_latitude = entry.latitudeA
+    target_longitude = entry.longitudeA
+
+    time_difference = None
+    for i in range(1440):  # Check every minute for the next 24 hours (1440 minutes)
+        future_time = current_time + i * 60  # Increment by 1 minute
+        geocentric_future = satellite.at(future_time)
+
+        # Calculate distance to target coordinates
+        target_position = geocentric_future.subpoint()
+        distance = np.sqrt((target_position.latitude.degrees - target_latitude) ** 2 +
+                           (target_position.longitude.degrees - target_longitude) ** 2)
+
+        # Set a threshold distance to consider as "reached"
+        if distance < 1:  # 1 degree threshold 
+            actual_time_difference = (future_time - current_time).total_seconds() / 3600
+            
+            if actual_time_difference == 24:  # Check if the time difference is exactly 24 hours
+                time_difference = future_time.utc_strftime('%Y-%m-%d %H:%M:%S')
+                
+                send_simple_message(email, "Satellite will reach the target coordinates in 24 hours", f"The satellite will reach the target coordinates at {time_difference}")
+                break
+
+    
+    if time_difference:
+        return jsonify({'reach_time': time_difference}), 200
+    else:
+        return jsonify({'error': 'The satellite will not reach the target coordinates in the next 24 hours.'}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
