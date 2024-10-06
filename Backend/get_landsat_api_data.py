@@ -1,22 +1,12 @@
 import requests
 import json
+from hidden_vars import *
+from login import login
+from logout import logout
 
-url = "https://m2m.cr.usgs.gov/api/api/json/stable/"
-loginURL = url + "login-token"
-loginData = {
-    "username": "hoadi",
-    "token": "yiea2@Hc5cteIRHycnd@DpicT8o_HwEROuSf0Qj66BJ6uRPRzJXKJl9WAGTD@FmM"
-}
-response = requests.get(loginURL, json=loginData)
-print(f"Login Error Code: {response.status_code}")
-print(f"Login JSON: {response.json()}")
-responseStr = json.dumps(response.json())
-jsonDict = json.loads(f"{responseStr}")
-APIKey = jsonDict['data']
-print(f"API KEY: {APIKey}\n")
+APIKey = login(URL, USERNAME, TOKEN)
 
-
-def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
+def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
     # Inputs:
     # lowerLeft: [lat, long]
     # upperRight: [lat, long]
@@ -25,10 +15,12 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
     # maxCloudCover: int
     # minCloudCover: int
     # maxResults: int
-    datasetURL = url + f"scene-search"
+    lowerLeft = [coordinate[0] - 0.01, coordinate[1] - 0.01]
+    upperRight = [coordinate[0] + 0.01, coordinate[1] + 0.01]
+    datasetURL = URL + f"scene-search"
     datasetData = {
     "maxResults": maxResults,
-    "datasetName": "gls_all",
+    "datasetName": "landsat_ot_c2_l1",
     "sceneFilter": {
         "ingestFilter": None,
         "spatialFilter": {
@@ -44,9 +36,9 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
         },
         "metadataFilter": None,
         "cloudCoverFilter": {
-            "max": minCloudCover,
-            "min": maxCloudCover,
-            "includeUnknown": False
+            "max": maxCloudCover,
+            "min": minCloudCover,
+            "includeUnknown": True
         },
         "acquisitionFilter": {
             "end": endTime,
@@ -64,16 +56,22 @@ def datasetSearch(APIKey, lowerLeft: list, upperRight: list, startTime: str, end
     print(f"Dataset Error Code: {response.status_code}")
     print(f"Dataset JSON: {response.json()}\n\n\n")
     print(f"Data: {json.loads(f'{json.dumps(response.json())}')['data']}\n\n\n")
-    for n in range(0, maxResults):
-        try:
-            image = json.loads(f'{json.dumps(response.json())}')['data']['results'][n]['browse'][0]['browsePath']
-            images = str(image)
-        except IndexError:
-            print("haha funny to make code work")
-        
+    images = []
+    index = 0
+    try:
+        while index < maxResults:
+            image = str(json.loads(f'{json.dumps(response.json())}')['data']['results'][index]['browse'][0]['browsePath'])
+            images.insert(-1, image)
+            index += 1
+    except:
         return images
+    return images
+        
 
-logoutURL = url + "logout"
-response = requests.get(logoutURL, json={}, headers={'X-Auth-Token':APIKey})
-print(f"Logout Error Code: {response.status_code}")
-print(f"Logout JSON: {response.json()}")
+
+print(f"{datasetSearch(coordinate=[42.3043, -83.0660], startTime='2024-10-01', endTime='2024-10-06', maxCloudCover=100, minCloudCover=0, maxResults=1)}")
+
+# datasetSearch(coordinate=[lat, long], startTime='YYYY-MM-DD', endTime='YYYY-MM-DD', minCloudCover=int, maxCloudCover=int, maxResults=int)
+
+logout(url=URL, APIKey=APIKey)
+
