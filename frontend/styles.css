@@ -1,0 +1,20 @@
+.Title{
+    text-align: center;
+    color: white;
+}
+form{
+
+color: white;
+
+}
+
+body{
+
+    background-image: url('poster_earth.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: black;
+
+}
