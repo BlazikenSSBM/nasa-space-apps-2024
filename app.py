@@ -6,6 +6,7 @@ from EmailLandSat import send_simple_message
 from flask import Flask,request,redirect
 from flask.templating import render_template
 import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 
@@ -117,6 +118,17 @@ def calculate_time(email):
         return jsonify({'reach_time': time_difference}), 200
     else:
         return jsonify({'error': 'The satellite will not reach the target coordinates in the next 24 hours.'}), 200
+
+def continuous_check():
+    with app.app_context():  # Flask context needed for database operations
+        entries = Main.query.all()
+        for entry in entries:
+            calculate_time(entry.email)  # Call the satellite calculation function for each email
+
+# Set up a background scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=continuous_check, trigger="interval", seconds=3600)  # Check every 10 minutes
+scheduler.start()
 
 
 if __name__ == '__main__':
