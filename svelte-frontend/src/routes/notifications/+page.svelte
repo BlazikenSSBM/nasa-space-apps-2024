@@ -21,7 +21,7 @@
                     <input type="text" name="longitude" placeholder="+180.000" required>
                     </div>
                     <h3>Email:</h3>
-                    <input type="email" name="email" placeholder="...@.com" required>
+                    <input type="email" name="email" pattern = '^\w+@\w+.\w+$' placeholder="...@.com" required>
                     <button type="submit" form="post">Send Off!</button>
                 </div>
             </form>
