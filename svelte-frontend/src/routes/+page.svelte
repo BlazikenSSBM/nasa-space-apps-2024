@@ -17,13 +17,13 @@
           <form id="input" action="http://127.0.0.1:5000/getCoordinates" method="POST">
             <input
               type="text"
-              name="longitude"
+              name="latitude"
               placeholder="-180.000"
               required
             />
             <input
               type="text"
-              name="latitude"
+              name="longitude"
               placeholder="+180.000"
               required
             />

@@ -13,15 +13,15 @@
     <Particles>
         <div class="main-text">
             <h1>Sign Up For Notifications!</h1>
-            <form action="POST" id="post">
+            <form id="input" action="http://127.0.0.1:5000/getEmail" method="POST">
                 <div class="form-container">
                     <h3>Coordinates:</h3>
                     <div class="coords">
-                        <input type="text" placeholder="-180.000" required>
-                        <input type="text" placeholder="+180.000" required>
+                        <input type="text" name="latitude" placeholder="-180.000" required>
+                    <input type="text" name="longitude" placeholder="+180.000" required>
                     </div>
                     <h3>Email:</h3>
-                    <input type="email" placeholder="...@.com" required>
+                    <input type="email" name="email" placeholder="...@.com" required>
                     <button type="submit" form="post">Send Off!</button>
                 </div>
             </form>

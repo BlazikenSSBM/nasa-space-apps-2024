@@ -30,17 +30,17 @@
     <Body>
     <Particles>
         <div class="page-container">
-            <form >
+            <form id="input" action="http://127.0.0.1:5000/getCoordinatesAndDate" method="POST">
                 <h2>Coordinates:</h2>
                 <div class="coordinates">
-                    <input type="text" placeholder="-180.000" required>
-                    <input type="text" placeholder="+180.000" required>
+                    <input type="text" name="latitude" placeholder="-180.000" required>
+                    <input type="text" name="longitude" placeholder="+180.000" required>
                 </div>
                 <h2>Date Range:</h2>
                 <div class="date-range">
-                    <input type="date" required>
+                    <input type="date" name="date" required>
                 </div>
-                <button type="submit">Send Off Data!</button>
+                <button type="submit" form="input">Send Off Data!</button>
             </form>
             <div class="picture">
                 <div class="slideshow">

@@ -4,9 +4,10 @@ from hidden_vars import *
 from login import login
 from logout import logout
 
-APIKey = login(URL, USERNAME, TOKEN)
+
 
 def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover: int, minCloudCover: int, maxResults: int):
+    APIKey = login(URL, USERNAME, TOKEN)
     # Inputs:
     # lowerLeft: [lat, long]
     # upperRight: [lat, long]
@@ -64,13 +65,12 @@ def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover:
         images.insert(-1, image)
         index += 1
 
+    logout(url=URL, APIKey=APIKey)
     return images
-        
 
 
-print(f"{datasetSearch(coordinate=[42.3043, -83.0660], startTime='2023-01-01', endTime='2024-10-06', maxCloudCover=100, minCloudCover=0, maxResults=10000)}")
 
 # datasetSearch(coordinate=[lat, long], startTime='YYYY-MM-DD', endTime='YYYY-MM-DD', minCloudCover=int, maxCloudCover=int, maxResults=int)
 
-logout(url=URL, APIKey=APIKey)
+
 

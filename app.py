@@ -8,6 +8,9 @@ from flask.templating import render_template
 import schedule
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
+import get_landsat_api_data
+from get_landsat_api_data import datasetSearch
+import datetime
 
 
 app= Flask(__name__)
@@ -69,11 +72,21 @@ def getEmail():
 @app.route('/getCoordinates', methods=['POST','GET'])
 def getCoordinates():
     if request.method == 'POST':
-        longitude = request.form['longitude']
-        latitude = request.form['latitude']
-        print(longitude, latitude)
-    return redirect('http://localhost:5173/')   
+        coordinates = [float(request.form['latitude']), float(request.form['longitude'])]
+        x = str(datetime.datetime.now())
+        x[:10]
+        response = datasetSearch(coordinate=coordinates, startTime="2024-01-01", endTime=x, maxCloudCover=100, minCloudCover=0, maxResults=1000)
+        print(response)
+    return redirect('http://localhost:5173/detailed')   
 
+@app.route('/getCoordinatesAndDate', methods=['POST','GET'])
+def getCoordinatesAndDate():
+    if request.method == 'POST':
+        coordinates = [float(request.form['latitude']), float(request.form['longitude'])]
+        date = request.form['date']
+        response = datasetSearch(coordinate=coordinates, startTime="2024-01-01", endTime=date, maxCloudCover=100, minCloudCover=0, maxResults=1000)
+        print(response)
+    return redirect('http://localhost:5173/detailed')   
 
 
 def calculate_time(email):
