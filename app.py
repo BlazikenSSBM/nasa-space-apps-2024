@@ -75,7 +75,7 @@ def getCoordinates():
         coordinates = [float(request.form['latitude']), float(request.form['longitude'])]
         x = str(datetime.datetime.now())
         x[:10]
-        response = datasetSearch(coordinate=coordinates, startTime="2024-01-01", endTime=x, maxCloudCover=100, minCloudCover=0, maxResults=1000)
+        response = datasetSearch(coordinate=coordinates, startTime="2000-01-01", endTime=x, maxCloudCover=100, minCloudCover=0, maxResults=1000)
         print(response)
     return redirect('http://localhost:5173/detailed')   
 
@@ -84,7 +84,7 @@ def getCoordinatesAndDate():
     if request.method == 'POST':
         coordinates = [float(request.form['latitude']), float(request.form['longitude'])]
         date = request.form['date']
-        response = datasetSearch(coordinate=coordinates, startTime="2024-01-01", endTime=date, maxCloudCover=100, minCloudCover=0, maxResults=1000)
+        response = datasetSearch(coordinate=coordinates, startTime="2000-01-01", endTime=date, maxCloudCover=100, minCloudCover=0, maxResults=1000)
         print(response)
     return redirect('http://localhost:5173/detailed')   
 
@@ -103,8 +103,8 @@ def calculate_time(email):
     ts = load.timescale()
     current_time = ts.now()
 
-    target_latitude = entry.latitudeA
-    target_longitude = entry.longitudeA
+    target_latitude = entry.latitude
+    target_longitude = entry.longitude
 
     time_difference = None
     for i in range(1440):  # Check every minute for the next 24 hours (1440 minutes)

@@ -60,7 +60,7 @@ def datasetSearch(coordinate: list, startTime: str, endTime: str, maxCloudCover:
     images = []
     index = 0
 
-    while index < len(json.loads(f'{json.dumps(response.json())}')['data']['results'][index]['browse'][0]['browsePath']):
+    while index < 10:
         image = str(json.loads(f'{json.dumps(response.json())}')['data']['results'][index]['browse'][0]['browsePath'])
         images.insert(-1, image)
         index += 1
