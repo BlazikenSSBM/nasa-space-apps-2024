@@ -76,8 +76,7 @@ def getCoordinates():
         x = str(datetime.datetime.now())
         x[:10]
         response = datasetSearch(coordinate=coordinates, startTime="2000-01-01", endTime=x, maxCloudCover=100, minCloudCover=0, maxResults=1000)
-        print(response)
-    return redirect('http://localhost:5173/detailed')   
+    return redirect(response[0])   
 
 @app.route('/getCoordinatesAndDate', methods=['POST','GET'])
 def getCoordinatesAndDate():
